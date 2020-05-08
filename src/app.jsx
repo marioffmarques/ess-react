@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 
 import NavBar from "./components/navBar";
-import StoreHelper from "./helpers/storeHelper";
+import AuthService from "./services/authService";
 
 class App extends Component {
   render() {
-    if (!StoreHelper.isLoggedIn()) {
+    if (!AuthService.isLoggedIn()) {
       return <Redirect to="/login"></Redirect>;
     }
     return (

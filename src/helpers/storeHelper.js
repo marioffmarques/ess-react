@@ -1,18 +1,14 @@
 class StoreHelper {
-  static isLoggedIn() {
-    return localStorage.getItem("authToken") !== null;
+  static setObject(key, obj) {
+    localStorage.setItem(key, obj);
   }
 
-  static setAuth(token) {
-    localStorage.setItem("authToken", token);
+  static getObject(key) {
+    return localStorage.getItem(key);
   }
 
-  static getAuthToken() {
-    return localStorage.getItem("authToken");
-  }
-
-  static removeAuthToken() {
-    localStorage.removeItem("authToken");
+  static removeObject(key) {
+    localStorage.removeItem(key);
   }
 }
 
