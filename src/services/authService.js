@@ -18,13 +18,11 @@ class AuthService {
     });
 
     if (response.ok) {
-      console.log("Response ok");
       let jResponse = await response.json();
       StoreHelper.setObject("authToken", jResponse.data.token);
-      return jResponse.data.token;
+      return true;
     } else {
-      console.log("Response NOT ok");
-      throw "Authentication Failed";
+      return false;
     }
   }
 

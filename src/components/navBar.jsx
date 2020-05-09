@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
+import { NavLink } from "react-router-dom";
 
 class NavBar extends Component {
   render() {
     return (
       <React.Fragment>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
           <a className="navbar-brand" href="#">
             <img
               src="/img/taxilogo.png"
@@ -28,19 +28,14 @@ class NavBar extends Component {
           </button>
 
           {/* <li><Link to="/public">Public Page</Link></li> */}
-          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div className="navbar-nav">
-              <a className="nav-item nav-link active" href="#">
-                Home <span className="sr-only">(current)</span>
+              <a className="nav-item nav-link active">
+                <NavLink to="/">Home</NavLink>
+                <span className="sr-only">(current)</span>
               </a>
-              <a class="nav-item nav-link" href="#">
-                Features
-              </a>
-              <a className="nav-item nav-link" href="#">
-                Pricing
-              </a>
-              <a className="nav-item nav-link disabled" href="#">
-                Disabled
+              <a className="nav-item nav-link">
+                <NavLink to="/about">About</NavLink>
               </a>
             </div>
           </div>

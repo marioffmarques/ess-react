@@ -1,17 +1,31 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, withRouter } from "react-router-dom";
 import AuthService from "../services/authService";
 
 class Login extends Component {
   state = {
     isLoading: false,
+    hasError: false,
+    errorMessage: "",
     username: "",
     password: "",
   };
 
   render() {
     if (AuthService.isLoggedIn()) {
-      return <Redirect to="/"></Redirect>;
+      {
+        const { history } = this.props;
+        console.log(history);
+        history.push("/", {});
+      }
+      // return (
+      //   <Redirect
+      //     to={{
+      //       pathname: "/",
+      //       state: { username: this.state.username },
+      //     }}
+      //   ></Redirect>
+      // );
     }
 
     return (
@@ -75,6 +89,11 @@ class Login extends Component {
                   Login
                 </button>
               </form>
+              {this.state.hasError && (
+                <div style={{ marginTop: 3, color: "red", fontSize: 13 }}>
+                  <p>* {this.state.errorMessage}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -92,9 +111,26 @@ class Login extends Component {
         this.state.password
       );
 
-      console.log("Resi;e", result);
+      if (result) {
+        this.setState({
+          errorMessage: null,
+          hasError: false,
+          isLoading: true,
+        });
+      } else {
+        this.setState({
+          errorMessage:
+            "Login Failed! The username must be equal to the password.",
+          hasError: true,
+          isLoading: false,
+        });
+      }
     } catch (err) {
-      console.log("AIAIAIAI");
+      this.setState({
+        errorMessage: "An error occurred while trying to login!",
+        hasError: true,
+        isLoading: false,
+      });
     }
   };
 }
