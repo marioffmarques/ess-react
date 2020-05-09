@@ -3,6 +3,12 @@ import { Redirect } from "react-router-dom";
 import AuthService from "../services/authService";
 
 class Login extends Component {
+  state = {
+    isLoading: false,
+    username: "",
+    password: "",
+  };
+
   render() {
     if (AuthService.isLoggedIn()) {
       return <Redirect to="/"></Redirect>;
@@ -32,9 +38,13 @@ class Login extends Component {
               <form>
                 <div className="form-group">
                   <input
-                    type="email"
+                    type="text"
                     className="form-control"
-                    placeholder="Enter your email"
+                    placeholder="Enter your username"
+                    value={this.state.username}
+                    onChange={(event) =>
+                      this.setState({ username: event.target.value })
+                    }
                   ></input>
                 </div>
 
@@ -43,13 +53,25 @@ class Login extends Component {
                     type="password"
                     className="form-control"
                     placeholder="Password"
+                    value={this.state.password}
+                    onChange={(event) =>
+                      this.setState({ password: event.target.value })
+                    }
                   ></input>
                 </div>
 
                 <button
-                  type="submit"
                   className="btn btn-secondary form-control"
+                  onClick={this.handleLogin}
                 >
+                  {this.state.isLoading && (
+                    <span
+                      style={{ marginRight: 10 }}
+                      className="spinner-border spinner-border-sm"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                  )}
                   Login
                 </button>
               </form>
@@ -59,6 +81,22 @@ class Login extends Component {
       </React.Fragment>
     );
   }
+
+  handleLogin = async (event) => {
+    event.preventDefault();
+    this.setState({ isLoading: true });
+
+    try {
+      let result = await AuthService.login(
+        this.state.username,
+        this.state.password
+      );
+
+      console.log("Resi;e", result);
+    } catch (err) {
+      console.log("AIAIAIAI");
+    }
+  };
 }
 
 export default Login;

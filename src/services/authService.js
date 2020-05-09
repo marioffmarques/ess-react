@@ -7,6 +7,7 @@ class AuthService {
       throw "Username and Password cannot be empty";
     }
     let credentialsBase64 = btoa(`${user}:${password}`);
+
     let response = await fetch(ApiEndpoints.TOKEN, {
       method: "POST",
       headers: new Headers({
@@ -15,11 +16,14 @@ class AuthService {
       mode: "cors",
       cache: "default",
     });
+
     if (response.ok) {
+      console.log("Response ok");
       let jResponse = await response.json();
       StoreHelper.setObject("authToken", jResponse.data.token);
       return jResponse.data.token;
     } else {
+      console.log("Response NOT ok");
       throw "Authentication Failed";
     }
   }
