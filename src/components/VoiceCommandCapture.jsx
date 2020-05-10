@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import CommandService from "../services/commandService";
+import AddressService from "../services/addressService";
 
 class VoiceCommandCapture extends Component {
   state = {
@@ -37,7 +38,7 @@ class VoiceCommandCapture extends Component {
                     ? "btn-outline-warning"
                     : "btn-outline-info"
                 }`}
-                style={{ width: "35%" }}
+                style={{ width: "35%", marginTop: "20px" }}
                 onClick={this.handleAudioRecording}
               >
                 {this.state.isLoading ? (
@@ -82,9 +83,12 @@ class VoiceCommandCapture extends Component {
                     ></textarea>
                     <button
                       type="button"
+                      disabled={
+                        this.state.isLoading || this.state.isSendingCommand
+                      }
                       className="btn btn-rounded waves-effect btn-outline-info"
                       style={{ width: "35%", marginTop: "10px" }}
-                      onClick={this.submitDestination}
+                      onClick={this.submitRevisedCommand}
                     >
                       {this.state.isSendingCommand ? (
                         <span
@@ -118,6 +122,7 @@ class VoiceCommandCapture extends Component {
 
     this.setState({
       isRecording: !this.state.isRecording,
+      hasError: false,
       destination: {
         isDestinationResolved: false,
         text: "",
@@ -135,7 +140,7 @@ class VoiceCommandCapture extends Component {
       .then(async (stream) => {
         this.setState({
           hasError: false,
-          error: "",
+          errorMessage: "",
         });
 
         this.recorder = RecordRTC(stream, {
@@ -149,7 +154,8 @@ class VoiceCommandCapture extends Component {
         console.log(error);
         this.setState({
           hasError: true,
-          error: `${error.name}: ${error.message}`,
+          isRecording: false,
+          errorMessage: `The permission to access the microphone was not granted. ${error.message}`,
         });
       });
   };
@@ -174,14 +180,13 @@ class VoiceCommandCapture extends Component {
       this.setState({
         isLoading: false,
         isRecording: false,
-        errorMessage: `An error occurred during voice processing! ${err.message}`,
+        errorMessage: `${err.name ?? "Error"}: ${err.message}`,
         hasError: true,
       });
     }
   };
 
   getCommandResult = async (commandId) => {
-    console.log("Polling Command: ", commandId);
     try {
       var result = await CommandService.getCommandResult(commandId);
       this.setState({
@@ -204,11 +209,25 @@ class VoiceCommandCapture extends Component {
     }
   };
 
-  submitDestination = async () => {
-    this.setState({ isSendingCommand: true });
+  submitRevisedCommand = async () => {
+    try {
+      this.setState({ isSendingCommand: true, hasError: false });
+      var result = await AddressService.searchAddress(
+        this.state.destination.text
+      );
 
-    // TODO AWAIT FOR THE RESPOSNE
-    this.props.handleCommandOutcome(["ola", "ole"]);
+      this.props.handleCommandOutcome(result);
+    } catch (err) {
+      this.setState({
+        errorMessage: `An error occurred while searching addresses! ${err.message}`,
+        hasError: true,
+        isSendingCommand: false,
+        // destination: {
+        //   isDestinationResolved: false,
+        //   text: "",
+        // },
+      });
+    }
   };
 }
 

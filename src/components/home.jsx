@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import { Redirect, BrowserRouter as Router } from "react-router-dom";
+import { SwitchTransition, CSSTransition } from "react-transition-group";
 
 import NavBar from "./navBar";
-import VoiceCommandCapture from "./VoiceCommandCapture";
+import VoiceCommandCapture from "./voiceCommandCapture";
+import AddressSelector from "./addressSelector";
 import AuthService from "../services/authService";
 
 class Home extends Component {
@@ -22,16 +24,35 @@ class Home extends Component {
           handleLogout={this.onLogout}
         />
         {this.state.voiceCommandOutcome.length == 0 && (
-          <VoiceCommandCapture
-            handleCommandOutcome={this.onVoiceCommandFinishProcessing}
-          />
+          <CSSTransition
+            in={true}
+            appear={true}
+            timeout={700}
+            classNames="fade"
+          >
+            <VoiceCommandCapture
+              handleCommandOutcome={this.onVoiceCommandFinishProcessing}
+            />
+          </CSSTransition>
+        )}
+
+        {this.state.voiceCommandOutcome.length > 0 && (
+          <CSSTransition
+            in={true}
+            appear={true}
+            timeout={700}
+            classNames="fade"
+          >
+            <AddressSelector
+              availableDestinations={this.state.voiceCommandOutcome}
+            />
+          </CSSTransition>
         )}
       </React.Fragment>
     );
   }
 
   onVoiceCommandFinishProcessing = (commandOutcome) => {
-    console.log("THere we go");
     this.setState({ voiceCommandOutcome: commandOutcome });
   };
 

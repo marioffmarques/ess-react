@@ -3,7 +3,7 @@ import AuthService from "./authService";
 
 class CommandService {
   static uploadVoiceCommand(commandBlob, type) {
-    if (!commandBlob) {
+    if (!commandBlob || commandBlob.size == 0) {
       throw { message: "Unexpected voice command." };
     }
 
@@ -11,8 +11,12 @@ class CommandService {
     reader.readAsDataURL(commandBlob);
 
     return new Promise(async (resolve, reject) => {
+      // TODO REMOVE THIS
+      resolve("sdfsdfsdfsdf");
+      return;
+
       reader.onloadend = async () => {
-        var base64data = reader.result;
+        var base64data = reader.result.split(",")[1];
         let response = await fetch(ApiEndpoints.UPLOAD_COMMAND, {
           method: "POST",
           headers: new Headers({
@@ -30,7 +34,7 @@ class CommandService {
           if (response.status == 401) {
             reject({ message: "Unauthorized." });
           } else {
-            reject({ message: "Server error." });
+            reject({ message: "Server error. The command cannot be parsed." });
           }
         }
       };
@@ -41,44 +45,49 @@ class CommandService {
     });
   }
 
-  static async getCommandResult(commandId, callback, error) {
+  static async getCommandResult(commandId) {
     if (!commandId) {
       throw { message: "Invalid command" };
     }
 
     return new Promise(async (resolve, reject) => {
+      // TODO REMOVE THIS
+      resolve("Rua do Brasil");
+      return;
+
       let attempts = 0;
       let jResponse = await this.runCommandRequest(commandId);
 
-      // TODO
-      while (jResponse !== "ok" && attempts < 10) {
+      console.log("Polling Command: ", commandId);
+      while (!jResponse.ok && attempts < 15) {
+        await new Promise((r) => setTimeout(r, 3000));
         jResponse = await this.runCommandRequest(commandId);
         console.log(attempts);
-
         attempts++;
       }
 
-      if (jResponse === "ok") {
-        resolve("Isto eé um texto");
+      if (jResponse.ok) {
+        resolve(jResponse.data.transcript);
       } else {
-        reject({ message: "Cannot get voice command transcription" });
+        if (jResponse.status == 401) {
+          reject({ message: "Unauthorized." });
+        } else {
+          reject({ message: "Voice command cannot be transcripted." });
+        }
       }
     });
   }
 
   static async runCommandRequest(commandId) {
-    return new Promise((resolve, rej) => {
-      resolve("ok");
+    let response = await fetch(`${ApiEndpoints.GET_COMMAND_TEXT}${commandId}`, {
+      method: "GET",
+      headers: new Headers({
+        Authorization: `Bearer ${AuthService.getAuthToken()}`,
+      }),
+      mode: "cors",
+      cache: "default",
     });
-    // let response = await fetch(`${ApiEndpoints.GET_COMMAND_TEXT}${commandId}`, {
-    //   method: "GET",
-    //   headers: new Headers({
-    //     Authorization: `Bearer ${AuthService.getAuthToken()}`,
-    //   }),
-    //   mode: "cors",
-    //   cache: "default",
-    // });
-    // return await response.json();
+    return await response.json();
   }
 }
 

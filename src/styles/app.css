@@ -1,0 +1,42 @@
+/* Appear on Page Load */
+.fade-appear {
+  opacity: 0;
+  z-index: 1;
+}
+.fade-appear.fade-appear-active {
+  opacity: 1;
+  transition: opacity 700ms linear;
+}
+
+/* enter */
+.fade-enter {
+  opacity: 0;
+  z-index: 1;
+}
+.fade-enter.fade-enter-active {
+  opacity: 1;
+  transition: opacity 5000ms linear 5000ms;
+}
+
+/* exit */
+.fade-exit {
+  opacity: 1;
+}
+.fade-exit.fade-exit-active {
+  opacity: 0;
+  transition: opacity 5000ms linear;
+}
+.fade-exit-done {
+  opacity: 0;
+}
+
+.list-group {
+  max-height: 300px;
+  margin-bottom: 10px;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+.list-group .active {
+  background-color: rgb(37, 162, 183);
+}
