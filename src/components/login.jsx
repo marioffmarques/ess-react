@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Redirect, withRouter } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import AuthService from "../services/authService";
 
 class Login extends Component {
@@ -13,19 +13,14 @@ class Login extends Component {
 
   render() {
     if (AuthService.isLoggedIn()) {
-      {
-        const { history } = this.props;
-        console.log(history);
-        history.push("/", {});
-      }
-      // return (
-      //   <Redirect
-      //     to={{
-      //       pathname: "/",
-      //       state: { username: this.state.username },
-      //     }}
-      //   ></Redirect>
-      // );
+      return (
+        <Redirect
+          to={{
+            pathname: "/",
+            state: { username: this.state.username },
+          }}
+        ></Redirect>
+      );
     }
 
     return (

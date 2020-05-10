@@ -20,6 +20,7 @@ class AuthService {
     if (response.ok) {
       let jResponse = await response.json();
       StoreHelper.setObject("authToken", jResponse.data.token);
+      StoreHelper.setObject("user", user);
       return true;
     } else {
       return false;
@@ -28,10 +29,15 @@ class AuthService {
 
   static logout() {
     StoreHelper.removeObject("authToken");
+    StoreHelper.removeObject("user");
   }
 
   static isLoggedIn() {
     return StoreHelper.getObject("authToken") !== null;
+  }
+
+  static getAuthToken() {
+    return StoreHelper.getObject("authToken");
   }
 }
 
