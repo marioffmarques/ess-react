@@ -33,10 +33,15 @@ class AddressService {
     }
   }
 
-  static async getPriceForDestination(destinationAddress) {
+  static async getPriceForDestination(originLocation, destinationAddress) {
+    if (!originLocation) {
+      throw { message: "User location is not defined" };
+    }
     if (!destinationAddress) {
       throw { message: "Destination address is not valid." };
     }
+
+    console.log("Origin Location:", originLocation);
     console.log("Getting price for Address:", destinationAddress.label);
 
     let response = await fetch(ApiEndpoints.GET_ADDRESS_PRICE, {
@@ -46,7 +51,7 @@ class AddressService {
         "Content-Type": "application/json",
       }),
       body: JSON.stringify({
-        origin: { lat: 40.19965, lng: -8.41735 },
+        origin: originLocation,
         destination: destinationAddress.position,
       }),
       mode: "cors",

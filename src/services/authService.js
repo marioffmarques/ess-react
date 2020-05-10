@@ -19,8 +19,11 @@ class AuthService {
 
     if (response.ok) {
       let jResponse = await response.json();
-      StoreHelper.setObject("authToken", jResponse.data.token);
-      StoreHelper.setObject("user", user);
+      StoreHelper.setObject("adata", {
+        token: jResponse.data.token,
+        user: user,
+      });
+
       return true;
     } else {
       return false;
@@ -28,16 +31,15 @@ class AuthService {
   }
 
   static logout() {
-    StoreHelper.removeObject("authToken");
-    StoreHelper.removeObject("user");
+    StoreHelper.removeObject("adata");
   }
 
   static isLoggedIn() {
-    return StoreHelper.getObject("authToken") !== null;
+    return StoreHelper.getObject("adata") !== undefined;
   }
 
   static getAuthToken() {
-    return StoreHelper.getObject("authToken");
+    return JSON.parse(StoreHelper.getObject("adata")).token;
   }
 }
 

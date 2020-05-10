@@ -1,17 +1,41 @@
 import React, { Component } from "react";
-import { SwitchTransition, CSSTransition } from "react-transition-group";
 import AddressService from "../services/addressService";
+import TripService from "../services/tripService";
 
 class AddressSelector extends Component {
   state = {
     availableDestinations: this.props.availableDestinations,
     selectedDestination: -1,
     isPriceLoading: false,
+    currentUserPosition: {
+      lat: 40.19965,
+      lng: -8.41735,
+    },
     isStartingTrip: false,
     priceForTrip: null,
     errorMessage: "",
     hasError: false,
   };
+
+  componentDidMount() {
+    if (!navigator.geolocation) {
+      console.log("Geolocation is not supported by your browser");
+    } else {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          this.setState({
+            currentUserPosition: {
+              lat: pos.coords.latitude,
+              lng: pos.coords.longitude,
+            },
+          });
+        },
+        () => {
+          console.log("Geolocation was not activated.");
+        }
+      );
+    }
+  }
 
   render() {
     return (
@@ -115,6 +139,7 @@ class AddressSelector extends Component {
       });
 
       var price = await AddressService.getPriceForDestination(
+        this.state.currentUserPosition,
         this.state.availableDestinations[index]
       );
 
@@ -135,7 +160,21 @@ class AddressSelector extends Component {
   };
 
   startTheTrip = async () => {
-    this.setState({ isStartingTrip: true });
+    try {
+      this.setState({ isStartingTrip: true });
+
+      var tripData = await TripService.startTrip(
+        this.state.currentUserPosition
+      );
+
+      this.props.handleTripStart(tripData);
+    } catch (err) {
+      this.setState({
+        isStartingTrip: false,
+        errorMessage: `An error occurred while calling the taxi! ${err.message}`,
+        hasError: true,
+      });
+    }
   };
 }
 

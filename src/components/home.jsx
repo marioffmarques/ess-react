@@ -45,6 +45,7 @@ class Home extends Component {
           >
             <AddressSelector
               availableDestinations={this.state.voiceCommandOutcome}
+              handleTripStart={this.onTripStart}
             />
           </CSSTransition>
         )}
@@ -54,6 +55,10 @@ class Home extends Component {
 
   onVoiceCommandFinishProcessing = (commandOutcome) => {
     this.setState({ voiceCommandOutcome: commandOutcome });
+  };
+
+  onTripStart = (tripData) => {
+    console.log("Trip start", tripData);
   };
 
   onLogout = () => {
