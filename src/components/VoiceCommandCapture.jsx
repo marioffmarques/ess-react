@@ -111,13 +111,15 @@ class VoiceCommandCapture extends Component {
     );
   }
 
-  handleAudioRecording = () => {
+  handleAudioRecording = async () => {
     let isCurrentlyRecording = this.state.isRecording;
 
     if (!isCurrentlyRecording) {
       this.startAudioRecorder();
     } else {
-      this.stopAudioRecorder();
+      setTimeout(() => {
+        this.stopAudioRecorder();
+      }, 500);
     }
 
     this.setState({
