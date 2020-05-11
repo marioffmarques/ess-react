@@ -83,14 +83,29 @@ class AddressSelector extends Component {
                     <h5>
                       <strong>This is the price for your trip</strong>
                     </h5>
-                    <p>
+                    <div>
+                      <i className="fas fa-home pr-2" aria-hidden="true"></i>
+                      {this.state.priceForTrip.originName}
+                    </div>
+                    <div>
+                      <i
+                        className="fas fa-map-marker-alt pr-2"
+                        aria-hidden="true"
+                        style={{ paddingLeft: "5px" }}
+                      ></i>
                       {
                         this.state.availableDestinations[
                           this.state.selectedDestination
                         ].label
                       }
-                    </p>
-                    <p style={{ marginTop: "-15px" }}>
+                    </div>
+                    <p
+                      style={{
+                        fontSize: "19px",
+                        color: "#4B917F",
+                        marginTop: "6px",
+                      }}
+                    >
                       <strong>{`${this.state.priceForTrip.price} ${this.state.priceForTrip.currency}`}</strong>
                     </p>
 

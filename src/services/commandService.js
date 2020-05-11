@@ -11,9 +11,8 @@ class CommandService {
     reader.readAsDataURL(commandBlob);
 
     return new Promise(async (resolve, reject) => {
-      // TODO REMOVE THIS
-      resolve("sdfsdfsdfsdf");
-      return;
+      // resolve("8b78e84f-1894-452a-a42b-1333f49867ca");
+      // return;
 
       reader.onloadend = async () => {
         var base64data = reader.result.split(",")[1];
@@ -51,22 +50,21 @@ class CommandService {
     }
 
     return new Promise(async (resolve, reject) => {
-      // TODO REMOVE THIS
-      resolve("Rua do Brasil");
-      return;
+      // resolve("Rua do Brasil");
+      // return;
 
       let attempts = 0;
-      let jResponse = await this.runCommandRequest(commandId);
+      let response = await this.runCommandRequest(commandId);
 
       console.log("Polling Command: ", commandId);
-      while (!jResponse.ok && attempts < 15) {
-        await new Promise((r) => setTimeout(r, 3000));
-        jResponse = await this.runCommandRequest(commandId);
-        console.log(attempts);
+      while (!response.ok && attempts < 15) {
+        await new Promise((r) => setTimeout(r, 5000));
+        response = await this.runCommandRequest(commandId);
         attempts++;
       }
 
-      if (jResponse.ok) {
+      if (response.ok) {
+        var jResponse = await response.json();
         resolve(jResponse.data.transcript);
       } else {
         if (jResponse.status == 401) {
@@ -87,7 +85,7 @@ class CommandService {
       mode: "cors",
       cache: "default",
     });
-    return await response.json();
+    return response;
   }
 }
 
